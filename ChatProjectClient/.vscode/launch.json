@@ -9,6 +9,14 @@
       "name": "Launch App",
       "request": "launch",
       "mainClass": "App",
+      "projectName": "ChatProjectClient_83865b70",
+      "vmArgs": "--module-path lib/javafx/lib --add-modules javafx.controls,javafx.fxml"
+    },
+    {
+      "type": "java",
+      "name": "Launch App",
+      "request": "launch",
+      "mainClass": "App",
       "projectName": "ChatProjectClient_250ed29",
       "vmArgs": "--module-path lib/javafx/lib --add-modules javafx.controls,javafx.fxml"
     }
