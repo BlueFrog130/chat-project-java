@@ -1,3 +1,3 @@
 public interface ClientEvent {
-	public void onClientEvent(String data);
+	public void onClientEvent(Response response);
 }

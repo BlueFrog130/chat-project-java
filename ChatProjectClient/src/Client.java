@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,16 +7,18 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 public class Client {
 	private String hostname;
 	private int port;
 	private StringProperty userName = new SimpleStringProperty();
-	private ArrayList<String> users = new ArrayList<>();
-	private ArrayList<ClientEvent> onResponseListeners = new ArrayList<>();
+	private ObservableList<String> users = FXCollections.observableArrayList();
+	public ArrayList<ClientEvent> onResponseListeners = new ArrayList<>();
 
 	public Client(String hostname, int port) {
 		this.hostname = hostname;
@@ -42,6 +43,10 @@ public class Client {
 
 	public void addResponseListener(ClientEvent event) {
 		onResponseListeners.add(event);
+	}
+
+	public void addUserListener(ListChangeListener<String> listChangeListener) {
+		users.addListener(listChangeListener);
 	}
 }
 
@@ -69,8 +74,7 @@ class ReadThread extends Thread {
 					client.userNameProperty().set(response.getUser());
 					break;
 				case MESSAGE:
-					if (!response.getUser().equals(client.getUserName()))
-						System.out.printf("[%s]: %s\n", response.getUser(), response.getData());
+					client.onResponseListeners.forEach(e -> e.onClientEvent(response));
 					break;
 				case USERS:
 					String[] users = response.getData().split(",");
@@ -102,16 +106,7 @@ class WriteThread extends Thread {
 		}
 	}
 
-	public void run() {
-		Console console = System.console();
-		String text;
-		try {
-			while (true) {
-				text = console.readLine("[" + client.getUserName() + "]: ");
-				writer.println(text);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public void send(String message) {
+		writer.println(message);
 	}
 }
