@@ -6,10 +6,10 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Launch Client",
+      "name": "Launch Server",
       "request": "launch",
       "mainClass": "App",
-      "vmArgs": "--module-path lib/javafx/lib --add-modules javafx.controls,javafx.fxml",
+      "projectName": "ChatProject"
     }
   ]
 }
