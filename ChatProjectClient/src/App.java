@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,8 +17,13 @@ public class App extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Chat");
 		Parent root = FXMLLoader.load(getClass().getResource("fxml/index.fxml"));
+		root.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
 		Scene scene = new Scene(root, 600, 400, Color.BEIGE);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		primaryStage.setOnCloseRequest(e -> {
+			Platform.exit();
+			System.exit(0);
+		});
 	}
 }

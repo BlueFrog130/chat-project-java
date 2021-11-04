@@ -6,7 +6,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -18,7 +19,8 @@ public class Client {
 	private int port;
 	private StringProperty userName = new SimpleStringProperty();
 	private ObservableList<String> users = FXCollections.observableArrayList();
-	public ArrayList<ClientEvent> onResponseListeners = new ArrayList<>();
+	private ObservableList<Response> messages = FXCollections.observableArrayList();
+	private WriteThread writer;
 
 	public Client(String hostname, int port) {
 		this.hostname = hostname;
@@ -29,7 +31,8 @@ public class Client {
 		Socket socket = new Socket(hostname, port);
 		System.out.println("Connected to chat server");
 		new ReadThread(socket, this).start();
-		new WriteThread(socket, this).start();
+		writer = new WriteThread(socket);
+		writer.start();
 	}
 
 	public StringProperty userNameProperty() {
@@ -41,12 +44,28 @@ public class Client {
 			this.users.add(name);
 	}
 
-	public void addResponseListener(ClientEvent event) {
-		onResponseListeners.add(event);
+	public void addMessage(Response response) {
+		messages.add(response);
 	}
 
-	public void addUserListener(ListChangeListener<String> listChangeListener) {
-		users.addListener(listChangeListener);
+	public void addMessageListener(ListChangeListener<Response> listener) {
+		messages.addListener(listener);
+	}
+
+	public void addUserListener(ListChangeListener<String> listener) {
+		users.addListener(listener);
+	}
+
+	public void send(String message) {
+		writer.send(message);
+	}
+
+	public ObservableList<String> getUsersList() {
+		return users;
+	}
+
+	public ObservableList<Response> getMessages() {
+		return messages;
 	}
 }
 
@@ -71,14 +90,20 @@ class ReadThread extends Thread {
 				Response response = new Response(reader.readLine());
 				switch (response.getCommand()) {
 				case NAME:
-					client.userNameProperty().set(response.getUser());
+					Platform.runLater(() -> {
+						client.userNameProperty().set(response.getUser());
+					});
 					break;
 				case MESSAGE:
-					client.onResponseListeners.forEach(e -> e.onClientEvent(response));
+					Platform.runLater(() -> {
+						client.addMessage(response);
+					});
 					break;
 				case USERS:
-					String[] users = response.getData().split(",");
-					client.addUsers(users);
+					Platform.runLater(() -> {
+						String[] users = response.getData().split(",");
+						client.addUsers(users);
+					});
 					break;
 				default:
 					break;
@@ -93,11 +118,8 @@ class ReadThread extends Thread {
 
 class WriteThread extends Thread {
 	private PrintWriter writer;
-	private Client client;
 
-	public WriteThread(Socket socket, Client client) {
-		this.client = client;
-
+	public WriteThread(Socket socket) {
 		try {
 			OutputStream out = socket.getOutputStream();
 			writer = new PrintWriter(out, true);
