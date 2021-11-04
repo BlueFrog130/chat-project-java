@@ -6,41 +6,42 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class Client {
 	private String hostname;
 	private int port;
-	private String userName;
+	private StringProperty userName = new SimpleStringProperty();
 	private ArrayList<String> users = new ArrayList<>();
+	private ArrayList<ClientEvent> onResponseListeners = new ArrayList<>();
 
 	public Client(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
 	}
 
-	public void start() {
-		try {
-			Socket socket = new Socket(hostname, port);
-			System.out.println("Connected to chat server");
-			new ReadThread(socket, this).start();
-			new WriteThread(socket, this).start();
-		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
-		}
+	public void start() throws UnknownHostException, IOException {
+		Socket socket = new Socket(hostname, port);
+		System.out.println("Connected to chat server");
+		new ReadThread(socket, this).start();
+		new WriteThread(socket, this).start();
 	}
 
-	public String getUserName() {
+	public StringProperty userNameProperty() {
 		return userName;
-	}
-
-	public void setUserName(String name) {
-		userName = name;
 	}
 
 	public void addUsers(String[] users) {
 		for (String name : users)
 			this.users.add(name);
+	}
+
+	public void addResponseListener(ClientEvent event) {
+		onResponseListeners.add(event);
 	}
 }
 
@@ -65,7 +66,7 @@ class ReadThread extends Thread {
 				Response response = new Response(reader.readLine());
 				switch (response.getCommand()) {
 				case NAME:
-					client.setUserName(response.getData());
+					client.userNameProperty().set(response.getUser());
 					break;
 				case MESSAGE:
 					if (!response.getUser().equals(client.getUserName()))

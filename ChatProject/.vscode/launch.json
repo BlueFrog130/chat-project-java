@@ -8,8 +8,7 @@
       "type": "java",
       "name": "Launch Server",
       "request": "launch",
-      "mainClass": "App",
-      "projectName": "ChatProject"
+      "mainClass": "App"
     }
   ]
 }
