@@ -5,8 +5,9 @@ public class Response {
 	private Command command;
 	private String user;
 	private String data;
+	private boolean self;
 
-	public Response(String response) {
+	public Response(String response, String userName) {
 		Pattern p = Pattern.compile("(.+?):(?:\\{(.+?)\\})?(.*)$");
 		Matcher m = p.matcher(response);
 		if (m.matches()) {
@@ -14,6 +15,8 @@ public class Response {
 			user = m.group(2);
 			data = m.group(3);
 		}
+
+		self = user == null ? false : user.equals(userName);
 	}
 
 	public Command getCommand() {
@@ -26,5 +29,9 @@ public class Response {
 
 	public String getData() {
 		return data;
+	}
+
+	public boolean isSelf() {
+		return self;
 	}
 }

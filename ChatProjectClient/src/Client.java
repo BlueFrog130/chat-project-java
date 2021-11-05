@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -17,7 +16,7 @@ import javafx.collections.ObservableList;
 public class Client {
 	private String hostname;
 	private int port;
-	private StringProperty userName = new SimpleStringProperty();
+	private StringProperty userName = new SimpleStringProperty("");
 	private ObservableList<String> users = FXCollections.observableArrayList();
 	private ObservableList<Response> messages = FXCollections.observableArrayList();
 	private WriteThread writer;
@@ -29,7 +28,6 @@ public class Client {
 
 	public void start() throws UnknownHostException, IOException {
 		Socket socket = new Socket(hostname, port);
-		System.out.println("Connected to chat server");
 		new ReadThread(socket, this).start();
 		writer = new WriteThread(socket);
 		writer.start();
@@ -87,11 +85,11 @@ class ReadThread extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				Response response = new Response(reader.readLine());
+				Response response = new Response(reader.readLine(), client.userNameProperty().get());
 				switch (response.getCommand()) {
 				case NAME:
 					Platform.runLater(() -> {
-						client.userNameProperty().set(response.getUser());
+						client.userNameProperty().set(response.getData());
 					});
 					break;
 				case MESSAGE:

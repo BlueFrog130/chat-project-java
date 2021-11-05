@@ -9,6 +9,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -16,6 +18,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import javafx.util.Pair;
 
 public class IndexController implements Initializable {
@@ -29,6 +32,9 @@ public class IndexController implements Initializable {
 
 	@FXML
 	private ListView<Response> chat;
+
+	@FXML
+	private Label name;
 
 	public IndexController() {
 		Dialog<Pair<String, Integer>> dialog = new Dialog<>();
@@ -88,11 +94,19 @@ public class IndexController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		input.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.ENTER) {
-				client.send(input.getText());
-				input.clear();
+				input.setText(input.getText().replaceAll("\n", ""));
 				e.consume();
 			}
 		});
+		input.setOnKeyReleased(e -> {
+			if (e.getCode() == KeyCode.ENTER) {
+				if (!input.getText().isBlank())
+					client.send(input.getText());
+				input.clear();
+			}
+		});
+
+		name.textProperty().bind(client.userNameProperty());
 
 		users.setItems(client.getUsersList());
 		users.setFocusTraversable(false);
@@ -101,5 +115,11 @@ public class IndexController implements Initializable {
 		chat.setItems(client.getMessages());
 		chat.setFocusTraversable(false);
 		chat.setSelectionModel(new NoSelectionModel<Response>());
+		chat.setCellFactory(new Callback<ListView<Response>, ListCell<Response>>() {
+			@Override
+			public ListCell<Response> call(ListView<Response> listView) {
+				return new ResponseListCell();
+			}
+		});
 	}
 }

@@ -8,8 +8,6 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 	public static void main(String[] args) throws Exception {
-		// Client client = new Client("localhost", 8000);
-		// client.start();
 		launch(args);
 	}
 
