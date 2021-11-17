@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<GridPane xmlns="http://javafx.com/javafx/8"
+	xmlns:fx="http://javafx.com/fxml/1" fx:id="container">
+	<columnConstraints>
+		<ColumnConstraints hgrow="ALWAYS" />
+	</columnConstraints>
+	<children>
+		<Label fx:id="message" GridPane.rowIndex="0" textAlignment="LEFT">
+			<Font size="14.0" />
+		</Label>
+		<Label fx:id="user" GridPane.rowIndex="1" textAlignment="LEFT">
+			<font>
+				<Font size="10.0" />
+			</font>
+		</Label>
+	</children>
+</GridPane>

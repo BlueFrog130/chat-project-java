@@ -2,15 +2,10 @@ Red
 Maroon
 Scarlet
 Chestnut
-Bittersweet
 Orange
-Maize
 Goldenrod
 Dandelion
 Yellow
-Canary
-Inchworm
-Asparagus
 Fern
 Green
 Shamrock
@@ -39,7 +34,6 @@ Melon
 Brown
 Sepia
 Beaver
-Tumbleweed
 Tan
 Peach
 Apricot
@@ -50,4 +44,3 @@ Copper
 Black
 Gray
 White
-Oatmeal

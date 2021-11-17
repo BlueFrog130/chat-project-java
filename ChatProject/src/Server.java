@@ -31,6 +31,7 @@ public class Server {
 
 				User user = new User(socket, this, nameGenerator.randomUserName());
 				System.out.println(user.getUserName() + " connected");
+				broadcast("users:" + user.getUserName());
 				users.add(user);
 				user.start();
 			}

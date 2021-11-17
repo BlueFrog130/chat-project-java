@@ -1,3 +1,3 @@
 public enum Command {
-	MESSAGE, NAME, USERS
+	MESSAGE, NAME, USERS, LEAVE
 }

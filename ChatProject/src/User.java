@@ -45,6 +45,7 @@ public class User extends Thread {
 			}
 		} catch (SocketException ex) {
 			server.remove(this);
+			server.broadcast("leave:" + userName);
 			server.broadcast("message:{server}" + userName + " left the chat");
 		} catch (IOException ex) {
 			ex.printStackTrace();
