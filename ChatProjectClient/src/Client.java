@@ -109,7 +109,7 @@ class ReadThread extends Thread {
 					break;
 				case LEAVE:
 					Platform.runLater(() -> {
-
+						client.removeUser(response.getData());
 					});
 					break;
 				default:
