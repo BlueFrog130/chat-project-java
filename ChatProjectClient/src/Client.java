@@ -42,6 +42,10 @@ public class Client {
 			this.users.add(name);
 	}
 
+	public void removeUser(String user) {
+		this.users.remove(user);
+	}
+
 	public void addMessage(Response response) {
 		messages.add(response);
 	}
@@ -101,6 +105,11 @@ class ReadThread extends Thread {
 					Platform.runLater(() -> {
 						String[] users = response.getData().split(",");
 						client.addUsers(users);
+					});
+					break;
+				case LEAVE:
+					Platform.runLater(() -> {
+
 					});
 					break;
 				default:
