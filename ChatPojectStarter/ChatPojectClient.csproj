@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <ApplicationIcon />
+    <StartupObject>ChatPojectClient.Program</StartupObject>
+    <PackageId>ChatPojectClient</PackageId>
+    <Authors>Adam Grady</Authors>
+    <Product>ChatProject</Product>
+    <AssemblyName>ChatProjectClient</AssemblyName>
+    <RootNamespace>ChatPojectClient</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Java\" />
+	<None Include="Java\**" CopyToOutputDirectory="PreserveNewest"></None>
+  </ItemGroup>
+
+</Project>
