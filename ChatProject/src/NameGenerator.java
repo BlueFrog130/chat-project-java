@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap.KeySetView;
 
 public class NameGenerator {
 	private ArrayList<String> colors = new ArrayList<>();
@@ -16,8 +17,12 @@ public class NameGenerator {
 			colors.add(sc.nextLine());
 	}
 
-	public String randomUserName() {
-		return colors.get((int) (Math.random() * colors.size()) + 1)
-				+ animals.get((int) (Math.random() * animals.size()) + 1);
+	public String randomUserName(KeySetView<String, User> existing) {
+		String name;
+		do {
+			name = colors.get((int) (Math.random() * colors.size()))
+					+ animals.get((int) (Math.random() * animals.size()));
+		} while (existing.contains(name));
+		return name;
 	}
 }

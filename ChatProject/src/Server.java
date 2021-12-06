@@ -1,15 +1,14 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Chat server
  */
 public class Server {
 	private int port;
-	private Set<User> users = new HashSet<>();
+	private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
 	private NameGenerator nameGenerator = new NameGenerator();
 
 	public Server() throws IOException {
@@ -29,11 +28,12 @@ public class Server {
 			while (true) {
 				Socket socket = server.accept();
 
-				User user = new User(socket, this, nameGenerator.randomUserName());
+				String randomName = nameGenerator.randomUserName(users.keySet());
+				User user = new User(socket, this, randomName);
+				user.start();
 				System.out.println(user.getUserName() + " connected");
 				broadcast("users:" + user.getUserName());
-				users.add(user);
-				user.start();
+				users.put(randomName, user);
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -41,20 +41,20 @@ public class Server {
 	}
 
 	public void broadcast(String message) {
-		for (User user : users) {
+		for (User user : users.values()) {
 			user.send(message);
 		}
 	}
 
 	public void remove(User user) {
-		users.remove(user);
+		users.remove(user.getName());
 		System.out.println(user.getUserName() + " left");
 	}
 
 	public String getUsers() {
 		StringBuilder sb = new StringBuilder();
-		for (User u : users) {
-			sb.append(u.getUserName()).append(',');
+		for (String name : users.keySet()) {
+			sb.append(name).append(',');
 		}
 		return sb.toString();
 	}

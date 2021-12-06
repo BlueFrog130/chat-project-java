@@ -25,11 +25,11 @@ public class User extends Thread {
 
 	public void run() {
 		try {
-			InputStream in = socket.getInputStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader((in)));
-
 			OutputStream out = socket.getOutputStream();
 			writer = new PrintWriter(out, true);
+
+			InputStream in = socket.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader((in)));
 
 			send("name:" + userName);
 			send("users:" + server.getUsers());
@@ -53,6 +53,8 @@ public class User extends Thread {
 	}
 
 	public void send(String message) {
-		writer.println(message);
+		if (writer != null) {
+			writer.println(message);
+		}
 	}
 }
